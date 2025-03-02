@@ -5,20 +5,20 @@ const User = require("./models/user");
 const user = require("./models/user");
 app.use(express.json());
 
-// app.post("/signup", async (req, res) => {
-//   //creating a new instance of user modal
+app.post("/signup", async (req, res) => {
+  //creating a new instance of user modal
 
-//   console.log(req.body);
-//   const user = new User(req.body);
+  //console.log(req.body);
+  const user = new User(req.body);
 
-//   try {
-//     await user.save();
-//     res.send("user added successfully !!");
-//   } catch (err) {
-//     res.status(400).send("Error saving the user" + err.message);
-//   }
+  try {
+    await user.save();
+    res.send("user added successfully !!");
+  } catch (err) {
+    res.status(400).send("Error saving the user" + err.message);
+  }
 
-// });
+});
 
 app.get("/user", async (req, res)=>{
     const userEmail=req.body.email;
