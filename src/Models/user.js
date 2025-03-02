@@ -7,10 +7,14 @@ const userSchema= new mongoose.Schema({
         type: String
     },
     email:{
-        type:String
+        type:String,
+        required:true,
+        unique:true,
+        trim:true,
     }, 
     password:{
-        type:Number
+        type:String, 
+        required:true,
     }, 
     age:{
         type:Number
@@ -18,6 +22,10 @@ const userSchema= new mongoose.Schema({
     gender:{
         type:String
     },
+    about:{
+        type:String,
+        default:"this is dafault about the user"
+    }
 });
 
 module.exports=mongoose.model("User", userSchema)

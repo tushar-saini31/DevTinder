@@ -1,64 +1,70 @@
-    const express=require("express");
-    const connectDB=require("./config/database");
-    const app=express();
-    const User=require("./models/user");
+const express = require("express");
+const connectDB = require("./config/database");
+const app = express();
+const User = require("./models/user");
+const user = require("./models/user");
+app.use(express.json());
 
-    app.post("/signup", async (req, res)=>{
-        //creating a new instance 
-        const user=new User({
-            firstName:"Virat",
-            lastName:"kholi",
-            email:"kholi@gmail.com",
-            passwaord:"223666",
-            age:'35',
-            gender:'mail'
-        });
-        await user.save();
-        res.send("user added successfully !!");
-    });
+// app.post("/signup", async (req, res) => {
+//   //creating a new instance of user modal
 
-    connectDB().then(()=>{
-        console.log("database is istablished...");
-        app.listen(7777,()=>{
-            console.log("server is successfully listening on port 7777 ");
-        });
-    })
-    .catch((err)=>{
-        console.error("database is not established...");
-    });
+//   console.log(req.body);
+//   const user = new User(req.body);
 
-
-
-
-
-// const express=require("express");
-// const connectDB=require("./config/database");
-// const User=require("./models/user");
-// const app=express();
-
-// app.use(express.json());
-
-// app.post("/signup", async (req, res)=>{
-//     const newUser = new User({
-//         firstName:"Tushar",
-//         lastName:"Saini",
-//         email:"ts4275131@gmail.com",
-//         password:"223456",
-//         age:23,
-//         gender:"male"
-//     });
-//     await newUser.save();
+//   try {
+//     await user.save();
 //     res.send("user added successfully !!");
+//   } catch (err) {
+//     res.status(400).send("Error saving the user" + err.message);
+//   }
+
 // });
 
-// connectDB().then(()=>{
-//     console.log("database is established...");
-//     app.listen(7777,()=>{
-//         console.log("server is successfully listening on port 7777");
-//     });
-// })
-// .catch((err)=>{
-//     console.error("database is not established...", err);
-// });
+app.get("/user", async (req, res)=>{
+    const userEmail=req.body.email;
 
+    try{
+        const users= await User.find({email:userEmail});
+        // if(users.length===0)
+        // {
+        //     res.status(404).send("user not found");
+        // }else{
+            res.send(users);
+    //     }
+     }catch(err)
+    {
+        res.status(400).send("something went wrong");
+    }
+});
 
+app.get("/feed", (req, res)=>{
+
+});
+
+// Update User Route (PATCH)
+app.patch("/user", async (req, res) => {
+    const userId = req.body.userId;
+    const data = req.body;
+  
+    try {
+      const user = await User.findByIdAndUpdate(userId, data, { new: true });
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+      console.log(user);
+      res.send("User updated successfully");
+    } catch (err) {
+      res.status(400).send("Something went wrong: " + err.message);
+    }
+  });
+
+connectDB()
+  .then(() => {
+    console.log("database is istablished...");
+    app.listen(7777, () => {
+      console.log("server is successfully listening on port 7777 ");
+    });
+  })
+  .catch((err) => {
+    console.error("database is not established...");
+  });
