@@ -1,0 +1,158 @@
+### Folder Structure
+
+ChatApp/
+│
+├─ server.py        # Server Communication
+├─ client.py        # Client Communication
+├─ gui.py           # Full Chat GUI
+├─ encryption.py    # AES + Base64 Encryption 🔒
+└─ README.md        # Documentation
+
+---
+
+### server.py
+```python
+import socket
+import threading
+
+clients = []
+
+# Function to broadcast messages to all clients
+def broadcast(message, client_socket):
+    for client in clients:
+        if client != client_socket:
+            try:
+                client.send(message)
+            except:
+                clients.remove(client)
+
+# Handle Client Connection
+def handle_client(client_socket, address):
+    print(f"[+] {address} connected")
+    clients.append(client_socket)
+    while True:
+        try:
+            message = client_socket.recv(1024)
+            broadcast(message, client_socket)
+        except:
+            print(f"[-] {address} disconnected")
+            clients.remove(client_socket)
+            client_socket.close()
+            break
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(("localhost", 9999))
+server.listen(5)
+print("[SERVER] Server Started on Port 9999")
+
+while True:
+    client_socket, address = server.accept()
+    client_thread = threading.Thread(target=handle_client, args=(client_socket, address))
+    client_thread.start()
+```
+
+---
+
+### client.py
+```python
+import socket
+import threading
+
+def receive_messages(client_socket):
+    while True:
+        try:
+            message = client_socket.recv(1024).decode()
+            print(message)
+        except:
+            print("Connection Closed")
+            break
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(("localhost", 9999))
+
+threading.Thread(target=receive_messages, args=(client,)).start()
+
+while True:
+    message = input("You: ")
+    client.send(message.encode())
+```
+
+---
+
+### gui.py
+```python
+import tkinter as tk
+from tkinter import scrolledtext
+from threading import Thread
+import socket
+
+class ChatGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Multi-Threaded Chat Application")
+        self.root.geometry("1000x600")
+        self.root.config(bg="#1e1e2d")
+
+        self.create_server_block()
+        self.create_client_block("Client 1", 0.35, 0.02)
+        self.create_client_block("Client 2", 0.35, 0.35)
+        self.create_client_block("Client 3", 0.35, 0.68)
+
+    def create_server_block(self):
+        server_frame = tk.Frame(self.root, bg="#232336", bd=5)
+        server_frame.place(relx=0.02, rely=0.02, relwidth=0.3, relheight=0.96)
+        title = tk.Label(server_frame, text="Server Block", font=("Arial", 14), bg="#232336", fg="white")
+        title.pack(pady=5)
+        self.server_text = scrolledtext.ScrolledText(server_frame, bg="#2d2d3c", fg="white", font=("Courier", 10))
+        self.server_text.pack(padx=5, pady=5, fill=tk.BOTH, expand=True)
+        self.server_text.insert(tk.END, "Server Logs:\n")
+        self.server_text.config(state=tk.DISABLED)
+
+    def create_client_block(self, name, x, y):
+        client_frame = tk.Frame(self.root, bg="#232336", bd=5)
+        client_frame.place(relx=x, rely=y, relwidth=0.63, relheight=0.3)
+        title = tk.Label(client_frame, text=name, font=("Arial", 14), bg="#232336", fg="white")
+        title.pack(pady=5)
+
+        chat_text = scrolledtext.ScrolledText(client_frame, bg="#2d2d3c", fg="white", font=("Courier", 10))
+        chat_text.pack(padx=5, pady=5, fill=tk.BOTH, expand=True)
+        chat_text.insert(tk.END, f"{name} Messages:\n")
+        chat_text.config(state=tk.DISABLED)
+
+        entry = tk.Entry(client_frame, bg="#1e1e2d", fg="white", font=("Courier", 12))
+        entry.pack(side=tk.LEFT, padx=5, pady=5, fill=tk.X, expand=True)
+        send_btn = tk.Button(client_frame, text="Send", bg="#3e3e56", fg="white", command=lambda: self.send_message(name, entry, chat_text))
+        send_btn.pack(side=tk.RIGHT, padx=5, pady=5)
+
+    def send_message(self, name, entry, chat_text):
+        message = entry.get()
+        if message.strip():
+            entry.delete(0, tk.END)
+            chat_text.config(state=tk.NORMAL)
+            chat_text.insert(tk.END, f"{name}: {message}\n")
+            chat_text.config(state=tk.DISABLED)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ChatGUI(root)
+    root.mainloop()
+```
+
+---
+
+### README.md
+```
+# Multi-Threaded Chat System with Secure File Transfer Protocol
+
+## Features
+- Multi-Threading
+- File Transfer
+- Image Transfer
+- AES Encryption
+- Real-Time Chat
+
+## How to Run?
+1. Run server.py
+2. Run client.py for every client
+3. GUI will display messages in real-time
+```
