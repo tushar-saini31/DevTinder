@@ -4,7 +4,11 @@ const bcrypt = require("bcrypt");
 const jwt=require("jsonwebtoken");
 const userSchema= new mongoose.Schema({
     firstName:{
-        type:String
+        type:String,
+        required:true,
+        index:true,
+        minLength:3,
+        maxlenth:50
     }, 
     lastName:{
         type: String
@@ -35,7 +39,11 @@ const userSchema= new mongoose.Schema({
         type:Number
     }, 
     gender:{
-        type:String
+        type:String,
+        enum:{
+            values:["male", "female", "other"],
+            message:'{value} is not valid gender type'
+        },
     },
     about:{
         type:String,

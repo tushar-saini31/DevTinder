@@ -6,7 +6,7 @@ const UserAuth=async (req, res, next)=>
         const{token}=req.cookies;
 
         if(!token){
-        throw new Error("tiken is not valid !!!")
+        throw new Error("token is not valid !!!")
         }
          const decodeobj= await jwt.verify(token,"DEV@TINDER$790");
             const {_id}=decodeobj;
