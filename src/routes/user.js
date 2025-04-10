@@ -4,7 +4,7 @@ const userRouter=express.Router();
 const ConnectionRequest=require("../Models/connectRequest");
 const user = require("../models/user");
 
-const USER_SAFE_DATA="firstName lastName gender age about";
+const USER_SAFE_DATA="firstName lastName gender age about photoUrl";
 
 userRouter.get("/user/request/recieved", UserAuth, async (req, res)=>{
     try{
@@ -19,7 +19,7 @@ userRouter.get("/user/request/recieved", UserAuth, async (req, res)=>{
         );
 
          res.json({
-            message: "data is fetched successfully",
+            message: "data is fetched successfully",    
             data:connectionRequests,
          })
     }catch(err){

@@ -48,6 +48,11 @@ const userSchema= new mongoose.Schema({
     about:{
         type:String,
         default:"this is dafault about the user"
+    },
+    photoUrl:{
+        type:String,
+        default: "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+
     }
 });
 userSchema.methods.getJWT=async function(){

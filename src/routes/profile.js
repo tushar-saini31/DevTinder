@@ -3,7 +3,7 @@ const profileRouter=express.Router();
 const {UserAuth}=require("../middleware/auth");
 const { validateEditProfileData } = require("../utils/validation");
 
-profileRouter.get("/profile",UserAuth,  async(req, res)=>{
+profileRouter.get("/profile/view",UserAuth,  async(req, res)=>{
     try{
     const user=req.user;
     if(!user){
@@ -23,7 +23,7 @@ profileRouter.patch("/profile/edit", UserAuth, async (req, res)=>{
         }
         const loggedInuser =req.user;
         //console.log(loggedInuser);
-        Object.keys(res.body).forEach((key)=>(loggedInuser[key]=req.body[key]));
+        Object.keys(req.body).forEach((key)=>(loggedInuser[key]=req.body[key]));
         await loggedInuser.save();
 
         res.send(`${loggedInuser.firstName},your profile is upadated`);

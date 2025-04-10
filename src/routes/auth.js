@@ -10,7 +10,7 @@ authRouter.post("/signup", async (req, res) => {
     try {
       validateSignUpData(req);
   
-      const{firstName, lastName, email, password}=req.body;
+      const{firstName, lastName, email, password, photoUrl, gender, age, about}=req.body;
   
       //encrpyt the password 
      const passwordHash=await bcrypt.hash(password, 10);
@@ -20,10 +20,15 @@ authRouter.post("/signup", async (req, res) => {
           firstName, 
           lastName, 
           email, 
-          password:passwordHash
+          password:passwordHash,
       });
-      await user.save();
-      res.send("user added successfully !!");
+      const savedUser=await user.save();
+      const token=await savedUser.getJWT();
+      res.cookie("token",token,{
+        expires:new Date(Date.now()+8*3600000),
+      })
+          
+      res.json({message: "user added successfully",data:savedUser});
     } catch (err) {
       res.status(400).send("Error " + err.message);
     }
@@ -33,10 +38,13 @@ authRouter.post("/signup", async (req, res) => {
   authRouter.post("/login", async(req, res)=>{
     try{
         const{email, password} =req.body
+        if (!email || !password) {
+          throw new Error("Email and password are required");
+        }
         const user = await User.findOne({email:email});
         if(!user)
         {
-        throw new error("invalid credentials");
+        throw new Error("invalid credentials");
         }
         const ispasswordValid=await user.validatePassword(password);
 
@@ -47,9 +55,9 @@ authRouter.post("/signup", async (req, res) => {
          const token= await user.getJWT();
 
            res.cookie("token",token);
-           res.send("login is successful");
+           res.send(user);
         }else{
-            throw new Error("invlid credentials");
+            throw new Error("invalid credentials");
         } 
     }catch(err){
         res.status(400).send("ERROR :"+err.message);
@@ -63,20 +71,6 @@ authRouter.post("/logout", (req, res)=>{
     res.send("logout is successfull");
 });
 
-
-
-// app.get("/user", UserAuth, async (req, res)=>{
-//     const userEmail=req.body.email;
-
-//     try{
-//         const users= await User.find({email:userEmail});
-//             res.send(users);
-
-//      }catch(err)
-//     {
-//         res.status(400).send("something went wrong");
-//     }
-// });
 
 
 
