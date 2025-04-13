@@ -4,6 +4,7 @@ const {UserAuth}=require("../middleware/auth");
 const ConnectionRequest=require ("../Models/connectRequest");
 const user = require("../Models/user");
 const ConnectRequestModel = require("../Models/connectRequest");
+const sendEmail= require("../utils/sendEmail");
 requestRouter.post("/request/send/:status/:toUserId",UserAuth, async (req, res)=>{
     try{
         const fromUserId=req.user._id;
@@ -78,6 +79,9 @@ requestRouter.post("/request/review/:status/:requestId", UserAuth,
             }
             connectionRequest.status=status;  
             const data = await connectionRequest.save();
+            const emailRes=await sendEmail.run();
+             
+            console.log(emailRes); 
             res.json({message:"connection request not found"+status, data}); 
 
         }catch(err)
