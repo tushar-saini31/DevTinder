@@ -4,7 +4,10 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const cors=require("cors");
 require('dotenv').config(); 
+console.log("Connecting to MongoDB with:", process.env.DB_CONNECTION_SECRET_KEY);
 
+
+connectDB();
 app.use(cors({
   origin:"http://localhost:5173",
   credentials:true,
@@ -26,8 +29,7 @@ app.use("/", userRouter);
 connectDB()
   .then(() => {
     console.log("database is istablished...");
-    app.listen(//process.env.PORT, 
-      7777,
+    app.listen(process.env.PORT,
     () => {
       console.log("server is successfully listening on port 7777 ");
     });
