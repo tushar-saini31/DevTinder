@@ -79,9 +79,11 @@ requestRouter.post("/request/review/:status/:requestId", UserAuth,
             }
             connectionRequest.status=status;  
             const data = await connectionRequest.save();
-            const emailRes=await sendEmail.run();
-             
+
+            const emailRes=await sendEmail.run(); 
             console.log(emailRes); 
+
+            
             res.json({message:"connection request not found"+status, data}); 
 
         }catch(err)

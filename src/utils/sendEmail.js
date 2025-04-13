@@ -20,7 +20,7 @@ const createSendEmailCommand = (toAddress, fromAddress) => {
           /* required */
           Html: {
             Charset: "UTF-8",
-            Data: "This is email body",
+            Data: "<h1>This is email body</h1>",
           },
           Text: {
             Charset: "UTF-8",
@@ -58,4 +58,4 @@ const createSendEmailCommand = (toAddress, fromAddress) => {
   };
 
 // snippet-end:[ses.JavaScript.email.sendEmailV3]
-module.export= { run };  
+module.exports= { run };  

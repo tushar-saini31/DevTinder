@@ -10,5 +10,5 @@ const sesClient = new SESClient({
     secretAccessKey: process.env.AWS_SES_SECRET_KEY,
   },
 });
-module.export = { sesClient };
+module.exports = { sesClient };
 // snippet-end:[ses.JavaScript.createclientv3]
