@@ -3,7 +3,7 @@ const connectDB = require("./config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors=require("cors");
-require('dotenv').config(); 
+require("dotenv").config(); 
 console.log("Connecting to MongoDB with:", process.env.DB_CONNECTION_SECRET_KEY);
 
 
